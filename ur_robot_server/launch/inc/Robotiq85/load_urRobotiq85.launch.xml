@@ -38,7 +38,7 @@
   <arg name="pitch" default="0.0" doc="base_link coordinate with respect to the world frame"/>
   <arg name="yaw" default="0.0" doc="base_link coordinate with respect to the world frame"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_robot_server)/urdf/urRobotiq85.xacro'
+  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_robot_server)/urdf/Robotiq85/urRobotiq85.xacro'
     joint_limit_params:=$(arg joint_limit_params)
     kinematics_params:=$(arg kinematics_params)
     physical_params:=$(arg physical_params)
