@@ -72,6 +72,27 @@
       safety_k_position="${safety_k_position}"
     />
 
+    <xacro:include filename="$(find ur_robot_server)/urdf/Robotiq85/couplerRobotiq.xacro"/>
+    <xacro:robotiq_coupler_macro />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Configure self collision properties per link -->
     <gazebo reference="${prefix}shoulder_link">
       <selfCollide>true</selfCollide>
