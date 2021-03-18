@@ -4,8 +4,8 @@
 echo "Installing robot-servers..."
 cd ~/robogym_ws/src
 git clone -b melodic https://github.com/jr-robotics/mir_robot.git
-git clone -b melodic https://github.com/L-eonor/universal_robot.git
-git clone -b melodic-devel https://github.com/L-eonor/robotiq.git
+git clone -b melodic https://github.com/jr-robotics/universal_robot.git
+git clone -b melodic-devel https://github.com/L-eonor/robotiq-1.git
 
 cd ..
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
