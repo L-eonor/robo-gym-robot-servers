@@ -19,4 +19,5 @@ source /opt/ros/melodic/setup.bash
 catkin init
 catkin build --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebugInfo
 pip install numpy scipy
+sudo apt-get install ros-melodic-gripper-action-controller #gripper action controller
 echo "Installed robot-servers"
