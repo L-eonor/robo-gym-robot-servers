@@ -72,22 +72,24 @@
       safety_k_position="${safety_k_position}"
     />
 
-    <xacro:include filename="$(find ur_robot_server)/urdf/Robotiq85/couplerRobotiq.xacro"/>
-    <xacro:robotiq_coupler_macro />
 
 
+    <!--
+      Import the xacro macro for the REAL robotiq gripper (augmented with Gazebo
+      specific elements in the respective repo).
+    -->
+    <xacro:include filename="$(find robotiq_2f_85_gripper_visualization)/urdf/robotiq_arg2f_85_model_macro.xacro"/>
 
+    <!-- Instantiate model for the gripper-->
+    <!-- robotiq 2f 85 gripper -->
+    <xacro:robotiq_arg2f_85 prefix=""/>
 
-
-
-
-
-
-
-
-
-
-
+    <!-- attaches the gripper to the ur end effector -->
+    <joint name="gripper_ur5_joint" type="fixed">
+        <parent link="tool0"/>
+        <child link="robotiq_arg2f_base_link"/>
+        <origin xyz="0 0 0.01" rpy="0 0 0"/>
+    </joint>
 
 
 
