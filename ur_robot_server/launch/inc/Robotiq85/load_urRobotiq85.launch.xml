@@ -38,6 +38,9 @@
   <arg name="pitch" default="0.0" doc="base_link coordinate with respect to the world frame"/>
   <arg name="yaw" default="0.0" doc="base_link coordinate with respect to the world frame"/>
 
+  <!--gripper files -->
+  <arg name="gripper_model" default="85" doc="robotiq_2f_85 or robotiq_2f_140"/>
+
   <param name="robot_description" command="$(find xacro)/xacro '$(find ur_robot_server)/urdf/Robotiq85/urRobotiq85.xacro'
     joint_limit_params:=$(arg joint_limit_params)
     kinematics_params:=$(arg kinematics_params)
@@ -52,6 +55,7 @@
     z:=$(arg z)
     roll:=$(arg roll)
     pitch:=$(arg pitch)
-    yaw:=$(arg yaw)"
+    yaw:=$(arg yaw)
+    gripper_model:=$(arg gripper_model)"
     />
 </launch>

@@ -20,6 +20,9 @@
   <arg name="pitch" default="0.0" doc="base_link coordinate with respect to the world frame"/>
   <arg name="yaw" default="0.0" doc="base_link coordinate with respect to the world frame"/>
 
+  <!--gripper files -->
+  <arg name="gripper_model" default="85" doc="robotiq_2f_85 or robotiq_2f_140"/>
+
   <!-- Use common launch file and pass all arguments to it -->
   <include file="$(dirname)/load_urRobotiq85.launch.xml" pass_all_args="true"/>
 </launch>

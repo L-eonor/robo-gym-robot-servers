@@ -31,10 +31,12 @@
   <arg name="kinematics_params" default="$(find ur_description)/config/ur5/default_kinematics.yaml"/>
   <arg name="physical_params" default="$(find ur_description)/config/ur5/physical_parameters.yaml"/>
   <arg name="visual_params" default="$(find ur_description)/config/ur5/visual_parameters.yaml"/>
+  <!-- Gripper specs, not finished yet-->
+  <arg name="gripper_model" default="85"/>
 
   <!-- Controller configuration -->
   <arg name="controller_config_file" default="$(find ur_robot_server)/config/ur5Gripper_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
-  <arg name="controllers" default="joint_state_controller gripper_controller eff_joint_traj_controller" doc="Controllers that are activated by default."/>
+  <arg name="controllers" default="joint_state_controller eff_joint_traj_controller" doc="Controllers that are activated by default."/>
   <arg name="stopped_controllers" default="joint_group_eff_controller" doc="Controllers that are initally loaded, but not started."/>
 
   <!-- Load urdf on the parameter server -->
@@ -43,6 +45,7 @@
     <arg name="kinematics_params" value="$(arg kinematics_params)"/>
     <arg name="physical_params" value="$(arg physical_params)"/>
     <arg name="visual_params" value="$(arg visual_params)"/>
+    <arg name="gripper_model" value="$(arg gripper_model)"/>
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>

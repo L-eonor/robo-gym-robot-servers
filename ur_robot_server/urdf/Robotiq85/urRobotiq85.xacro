@@ -42,6 +42,7 @@
   <xacro:arg name="roll" default="0.0"/>
   <xacro:arg name="pitch" default="0.0"/>
   <xacro:arg name="yaw" default="0.0"/>
+  <xacro:arg name="gripper_model" default="85"/>
   <!--
     legal values:
       - hardware_interface/PositionJointInterface
@@ -67,6 +68,7 @@
     safety_limits="$(arg safety_limits)"
     safety_pos_margin="$(arg safety_pos_margin)"
     safety_k_position="$(arg safety_k_position)"
+    gripper_model="$(arg gripper_model)"
   />
 
   <!--
