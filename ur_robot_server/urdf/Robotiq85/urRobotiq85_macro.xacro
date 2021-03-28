@@ -50,6 +50,12 @@
    safety_limits:=false safety_pos_margin:=0.15 safety_k_position:=20
    gripper_model"
   >
+
+    <!--   
+      ******************************************
+                        UR ARM
+      ******************************************
+    -->
     <!--
       Import the xacro macro for the REAL robot (which we'll augment with Gazebo
       specific elements in the wrapper macro below).
@@ -58,7 +64,6 @@
       the definitions for the real robot.
     -->
     <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
-
 
     <!-- Instantiate model for the REAL robot. -->
     <xacro:ur_robot
@@ -75,6 +80,11 @@
    
 
 
+    <!--   
+      ******************************************
+                  Robotiq Gripper
+      ******************************************
+    -->
     <!--
       Import the xacro macro for the REAL robotiq gripper (augmented with Gazebo
       specific elements in the respective repo).
@@ -99,6 +109,7 @@
       <xacro:robotiq_arg2f_140 prefix=""/>
     </xacro:if>
 
+    
     <!-- attaches the gripper to the coupler -->
     <joint name="gripper_ur5_joint" type="fixed">
         <parent link="tool0"/>
@@ -106,25 +117,33 @@
         <origin xyz="0 0 0" rpy="0 0 ${pi/2}"/>
     </joint>
 
-    <!-- Gazebo grasping plugin -->
-    <!-- Wiki: https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin 
+
+
+
+    <!--   
+      ******************************************
+                  Gazebo configs
+      ******************************************
+    -->
+    <!-- Gazebo grasping plugin - arraches object to palm link -->
+    <!-- Wiki: https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin -->
     <gazebo>
       <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
-            <arm>
-              <arm_name>ur_robot</arm_name>
-              <palm_link> robotiq_arg2f_base_link  </palm_link>
-              <gripper_link> left_inner_finger </gripper_link>
-              <gripper_link> right_inner_finger </gripper_link>
-            </arm>
-          <forces_angle_tolerance>100</forces_angle_tolerance>
-          <update_rate>4</update_rate>
-          <grip_count_threshold>4</grip_count_threshold>
-          <max_grip_count>8</max_grip_count>
-          <release_tolerance>0.005</release_tolerance>
-          <disable_collisions_on_attach>false</disable_collisions_on_attach>
-          <contact_topic>__default_topic__</contact_topic>
-        </plugin>
-    </gazebo>-->
+        <arm>
+          <arm_name>ur_robot</arm_name>
+          <palm_link> wrist_3_link  </palm_link>
+          <gripper_link> left_inner_finger </gripper_link>
+          <gripper_link> right_inner_finger </gripper_link>
+        </arm>
+        <forces_angle_tolerance>100</forces_angle_tolerance>
+        <update_rate>4</update_rate>
+        <grip_count_threshold>4</grip_count_threshold>
+        <max_grip_count>8</max_grip_count>
+        <release_tolerance>0.005</release_tolerance>
+        <disable_collisions_on_attach>false</disable_collisions_on_attach>
+        <contact_topic>__default_topic__</contact_topic>
+      </plugin>
+    </gazebo>
 
 
 
