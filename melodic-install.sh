@@ -7,6 +7,7 @@ git clone -b melodic https://github.com/jr-robotics/mir_robot.git
 git clone -b melodic https://github.com/jr-robotics/universal_robot.git
 git clone -b melodic-devel https://github.com/L-eonor/robotiq.git
 git clone https://github.com/roboticsgroup/roboticsgroup_gazebo_plugins.git #for mimc joint plugin
+sudo apt-get install ros-melodic-gripper-action-controller #action controller
 #for the gazebo_grasp_plugin
 sudo apt-get install ros-melodic-gazebo-ros
 sudo apt-get install ros-melodic-eigen-conversions
