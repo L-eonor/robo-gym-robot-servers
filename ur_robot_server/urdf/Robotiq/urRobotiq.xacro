@@ -29,7 +29,7 @@
     NOTE: this imports the Gazebo-wrapper main macro, NOT the regular
           xacro macro (which is hosted by ur_description).
   -->
-  <xacro:include filename="$(find ur_robot_server)/urdf/Robotiq85/urRobotiq85_macro.xacro"/>
+  <xacro:include filename="$(find ur_robot_server)/urdf/Robotiq/urRobotiq_macro.xacro"/>
 
   <!--Declare arguments -->
   <xacro:arg name="joint_limit_params" default=""/>

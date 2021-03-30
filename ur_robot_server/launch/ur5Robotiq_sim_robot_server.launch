@@ -26,13 +26,13 @@
   <arg name="yaw" default="0.0" doc="base_link coordinate with respect to the world frame"/>
 
    <!--Robot description and related parameter files -->
-  <arg name="robot_description_file" default="$(dirname)/inc/Robotiq85/load_ur5Robotiq85.launch.xml" doc="Launch file which populates the 'robot_description' parameter."/>
+  <arg name="robot_description_file" default="$(dirname)/inc/Robotiq/load_ur5Robotiq.launch.xml" doc="Launch file which populates the 'robot_description' parameter."/>
   <arg name="joint_limit_params" default="$(find ur_description)/config/ur5/joint_limits.yaml"/>
   <arg name="kinematics_params" default="$(find ur_description)/config/ur5/default_kinematics.yaml"/>
   <arg name="physical_params" default="$(find ur_description)/config/ur5/physical_parameters.yaml"/>
   <arg name="visual_params" default="$(find ur_description)/config/ur5/visual_parameters.yaml"/>
   <!-- Gripper specs, not finished yet-->
-  <arg name="gripper_model" default="85"/>
+  <arg name="gripper_model" default="85"/>  <!--85 or 140-->
 
   <!-- Controller configuration -->
   <arg name="controller_config_file" default="$(find ur_robot_server)/config/ur5Gripper_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>

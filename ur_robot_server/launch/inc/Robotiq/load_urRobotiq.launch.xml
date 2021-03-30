@@ -41,7 +41,7 @@
   <!--gripper files -->
   <arg name="gripper_model" default="85" doc="robotiq_2f_85 or robotiq_2f_140"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_robot_server)/urdf/Robotiq85/urRobotiq85.xacro'
+  <param name="robot_description" command="$(find xacro)/xacro '$(find ur_robot_server)/urdf/Robotiq/urRobotiq.xacro'
     joint_limit_params:=$(arg joint_limit_params)
     kinematics_params:=$(arg kinematics_params)
     physical_params:=$(arg physical_params)
