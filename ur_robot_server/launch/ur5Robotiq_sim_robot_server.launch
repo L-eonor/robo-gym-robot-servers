@@ -32,21 +32,13 @@
   <arg name="physical_params" default="$(find ur_description)/config/ur5/physical_parameters.yaml"/>
   <arg name="visual_params" default="$(find ur_description)/config/ur5/visual_parameters.yaml"/>
   <!-- Gripper specs, not finished yet-->
+  <arg name="gripper" default="true"/>
   <arg name="gripper_model" default="85"/>  <!--85 or 140-->
 
   <!-- Controller configuration -->
   <arg name="controller_config_file" default="$(find ur_robot_server)/config/ur5Gripper_controllers.yaml" doc="Config file used for defining the ROS-Control controllers."/>
   <arg name="controllers" default="eff_joint_traj_controller joint_state_controller gripper_controller" doc="Controllers that are activated by default."/>
   <arg name="stopped_controllers" default="joint_group_eff_controller" doc="Controllers that are initally loaded, but not started."/>
-  
-  <!-- Gripper Action Controller configuration -->
-  <arg name="sim" default="true"/>
-  <arg name="comport" default="/dev/ttyUSB0"/> 
-  <arg name="baud" default="115200" /> 
-  <!--<arg name="stroke" default="$(eval arg('gripper_model')/1000.0)"/>-->
-  <arg name="stroke" default="0.085"/>
-  <arg name="joint_name" default="finger_joint"/>
-  <arg name="verbose" default="true"/>
 
   <!-- Load urdf on the parameter server -->
   <include file="$(arg robot_description_file)">
@@ -102,6 +94,7 @@
     <param name="reference_frame" value="$(arg reference_frame)"></param>
     <param name="target_mode" value="$(arg target_mode)"></param>
     <param name="target_model_name" value="$(arg target_model_name)"></param>
+    <param name="gripper" value="$(arg gripper)"></param>
   </node>
 
   <!--Launch obstacle controller -->
