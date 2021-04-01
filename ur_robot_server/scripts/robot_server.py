@@ -2,12 +2,16 @@
 import grpc
 import rospy
 from concurrent import futures
-from ros_bridge import UrRosBridge
+from ros_bridge import UrRosBridge, UrGripperRosBridge
 from robo_gym_server_modules.robot_server.grpc_msgs.python import robot_server_pb2, robot_server_pb2_grpc
 
 class RobotServerServicer(robot_server_pb2_grpc.RobotServerServicer):
-    def __init__(self, real_robot, ur_model):
-        self.rosbridge = UrRosBridge(real_robot= real_robot, ur_model= ur_model)
+    def __init__(self, real_robot, ur_model, has_gripper):
+        if( has_gripper):
+            self.rosbridge = UrGripperRosBridge(real_robot= real_robot, ur_model= ur_model, has_gripper=has_gripper)
+        else:
+            self.rosbridge = UrRosBridge(real_robot= real_robot, ur_model= ur_model)
+
 
     def GetState(self, request, context):
         try:
@@ -33,9 +37,10 @@ def serve():
     server_port = rospy.get_param("~server_port")
     real_robot = rospy.get_param("~real_robot")
     ur_model = rospy.get_param("~ur_model")
+    has_gripper = rospy.get_param("~gripper")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     robot_server_pb2_grpc.add_RobotServerServicer_to_server(
-        RobotServerServicer(real_robot= real_robot, ur_model= ur_model), server)
+        RobotServerServicer(real_robot= real_robot, ur_model= ur_model, has_gripper=has_gripper), server)
     server.add_insecure_port('[::]:'+repr(server_port))
     server.start()
     if real_robot:
