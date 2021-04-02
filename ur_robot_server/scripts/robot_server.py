@@ -8,7 +8,7 @@ from robo_gym_server_modules.robot_server.grpc_msgs.python import robot_server_p
 class RobotServerServicer(robot_server_pb2_grpc.RobotServerServicer):
     def __init__(self, real_robot, ur_model, has_gripper):
         if( has_gripper):
-            self.rosbridge = UrGripperRosBridge(real_robot= real_robot, ur_model= ur_model, has_gripper=has_gripper)
+            self.rosbridge = UrGripperRosBridge(real_robot= real_robot, ur_model= ur_model)
         else:
             self.rosbridge = UrRosBridge(real_robot= real_robot, ur_model= ur_model)
 
