@@ -29,10 +29,10 @@ import control_msgs.msg
 import actionlib_tutorials.msg
 
 import time
+import numpy as np
+from std_msgs.msg import Float32
 
 
-close_pose=0.8 #stroke: 0.85, check it out @ https://robotiq.com/products/2f85-140-adaptive-robot-gripper
-open_pose=0
 
 class GripperController:
     def __init__(self, open_pose=0, close_pose=0.8, wait_for_completion=3):
@@ -41,6 +41,7 @@ class GripperController:
         self.wait_for_completion=wait_for_completion
         self.current_goal=None
         self.client=None
+        self.gripper_state=None
         self.init_gripper()
     
     def __create_goal(self, position, max_effort=-1):
@@ -65,7 +66,6 @@ class GripperController:
 
         return goal
 
-
     def __get_action_client(self):
         '''
         Creates the SimpleActionClient, passing the type of the action
@@ -86,7 +86,7 @@ class GripperController:
 
         return client
 
-    def __percentage_to_gap_size(self, percentage):
+    def __percentage_to_gap_size(self, desired_gap_size_percentage):
         '''
         Transforms the gap size percentage into mm
         Fully open gripper-> 100%=1
@@ -94,17 +94,17 @@ class GripperController:
         '''
 
         #Scales 0%-100% to 0-1
-        if percentage >1 and percentage <=100 and percentage >=0:
-            absolute_percentage=percentage/100
+        if desired_gap_size_percentage >1 and desired_gap_size_percentage <=100:
+            relative_gap_size=desired_gap_size_percentage/100
 
         else:
-            absolute_percentage=percentage
+            relative_gap_size=desired_gap_size_percentage
 
-        #Calculates gap size in mm
+        #Calculates gap size in mm; adds the lowest value in case of offset
         if self.close_pose > self.open_pose:
-            gap_size=(1-absolute_percentage)*self.close_pose
+            gap_size=self.close_pose - (self.close_pose-self.open_pose)*relative_gap_size
         else:
-            gap_size=absolute_percentage*self.open_pose
+            gap_size=self.close_pose + (self.open_pose-self.close_pose)*relative_gap_size
 
         return gap_size
         
@@ -123,7 +123,29 @@ class GripperController:
         self.client.send_goal(self.current_goal)
         
         return True
-            
+
+    def __gap_size_to_state(self, desired_gap_size):
+        '''
+        Transforms the gap size into 0-1 value to use as gripper state
+        0-> means closed
+        1-> means fully open
+        '''
+
+        if self.close_pose > self.open_pose:
+            gap_size_topic= (self.close_pose - desired_gap_size)/(self.close_pose - self.open_pose)
+
+        else:
+            gap_size_topic= (desired_gap_size - self.close_pose)/(self.open_pose - self.close_pose)
+
+        return np.float32(gap_size_topic)
+
+    def __update_gripper_state(self, gap_size):
+
+        gripper_state=self.__gap_size_to_state(gap_size)
+        self.gripper_state=gripper_state
+
+        return self.gripper_state
+
     def command_gripper(self, desired_gap_size, percentage=False, max_effort=-1):
         self.__get_action_client()
 
@@ -139,6 +161,8 @@ class GripperController:
         
         #solution: wait x seconds
         time.sleep(self.wait_for_completion)
+
+        self.__update_gripper_state(gap_size)
 
         return True
 
