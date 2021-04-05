@@ -364,7 +364,10 @@ class UrRosBridge:
 
 class UrGripperRosBridge:
 
-    def __init__(self,  real_robot=False, ur_model = 'ur10'):
+    def __init__(self,  real_robot=False, ur_model = 'ur5'):
+        #number of joint positions and velocities-> gripper has no velocity sensor?
+        self.number_of_joint_positions=7
+        self.number_of_joint_velocities=6
 
         # Event is clear while initialization or set_state is going on
         self.reset = Event()
@@ -384,7 +387,7 @@ class UrGripperRosBridge:
         self.obstacle_controller_pub = rospy.Publisher('move_obstacle', Bool, queue_size=10)
 
         self.target = [0.0] * 6
-        self.ur_state = [0.0] *12
+        self.ur_state = [0.0] * (self.number_of_joint_positions + self.number_of_joint_velocities) #(7 ur_joint_pos + 6 ur_joint_vel)
 
         rospy.Subscriber("joint_states", JointState, self.callbackUR)
 
@@ -479,7 +482,8 @@ class UrGripperRosBridge:
         msg.state.extend(ur_state)
         msg.state.extend(ee_to_base_transform)
         msg.state.extend([ur_collision])
-        msg.state.extend(gripper_state) # add gripper state
+        #msg.state.extend(gripper_state) # add gripper state
+
         msg.success = 1
         
         return msg
@@ -671,8 +675,8 @@ class UrGripperRosBridge:
 
     def callbackUR(self,data):
         if self.get_state_event.is_set():
-            self.ur_state[0:6]  = data.position[0:6]
-            self.ur_state[6:12] = data.velocity[0:6]
+            self.ur_state[0:self.number_of_joint_positions]  = data.position[0:self.number_of_joint_positions]
+            self.ur_state[self.number_of_joint_positions:(self.number_of_joint_positions+self.number_of_joint_velocities)] = data.velocity[0:self.number_of_joint_velocities]
 
     def shoulder_collision_callback(self,data):
         if data.states == []:
