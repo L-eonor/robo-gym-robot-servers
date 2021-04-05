@@ -366,6 +366,7 @@ class UrGripperRosBridge:
 
     def __init__(self,  real_robot=False, ur_model = 'ur5', number_of_joint_positions=7, number_of_joint_velocities=7):
         #number of joint positions and velocities-> gripper has no velocity sensor?
+        self.target_len=6 #(xyxrpy)
         self.number_of_joint_positions=number_of_joint_positions
         self.number_of_joint_velocities=number_of_joint_velocities
 
@@ -482,7 +483,6 @@ class UrGripperRosBridge:
         msg.state.extend(ur_state)
         msg.state.extend(ee_to_base_transform)
         msg.state.extend([ur_collision])
-        #msg.state.extend(gripper_state) # add gripper state
 
         msg.success = 1
         
@@ -495,7 +495,7 @@ class UrGripperRosBridge:
         self.reset.clear()
         # Set target internal value
         if self.target_mode == 'fixed':
-            self.target = copy.deepcopy(state[0:6])
+            self.target = copy.deepcopy(state[0:self.target_len]) #0:6
             # Publish Target Marker
             self.publish_target_marker(self.target)
         # Stop movement of obstacles
@@ -524,7 +524,7 @@ class UrGripperRosBridge:
         # UR Joints Positions
         reset_steps = int(15.0/self.sleep_time)
         for i in range(reset_steps):
-            self.publish_env_arm_cmd(state[6:12])
+            self.publish_env_arm_cmd(state[self.target_len:(self.target_len + self.number_of_joint_positions) ]) #6:(6+7) =6:13
         if not self.real_robot:
             # Reset collision sensors flags
             self.collision_sensors.update(dict.fromkeys(["shoulder","upper_arm","forearm","wrist_1","wrist_2","wrist_3"], False))
@@ -557,6 +557,7 @@ class UrGripperRosBridge:
             msg.joint_names = ["elbow_joint", "shoulder_lift_joint", "shoulder_pan_joint", \
                                 "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"]
             msg.points=[JointTrajectoryPoint()]
+
             msg.points[0].positions = position_cmd
             dur = []
             for i in range(len(msg.joint_names)):
