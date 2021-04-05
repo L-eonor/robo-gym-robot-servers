@@ -558,6 +558,10 @@ class UrGripperRosBridge:
                                 "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"]
             msg.points=[JointTrajectoryPoint()]
 
+            #removes finger_joint (index 1)
+            position_cmd= copy.deepcopy(position_cmd)
+            del position_cmd[1]
+            
             msg.points[0].positions = position_cmd
             dur = []
             for i in range(len(msg.joint_names)):
