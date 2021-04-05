@@ -364,10 +364,10 @@ class UrRosBridge:
 
 class UrGripperRosBridge:
 
-    def __init__(self,  real_robot=False, ur_model = 'ur5'):
+    def __init__(self,  real_robot=False, ur_model = 'ur5', number_of_joint_positions=7, number_of_joint_velocities=7):
         #number of joint positions and velocities-> gripper has no velocity sensor?
-        self.number_of_joint_positions=7
-        self.number_of_joint_velocities=6
+        self.number_of_joint_positions=number_of_joint_positions
+        self.number_of_joint_velocities=number_of_joint_velocities
 
         # Event is clear while initialization or set_state is going on
         self.reset = Event()

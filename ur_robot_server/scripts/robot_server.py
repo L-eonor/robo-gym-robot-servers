@@ -6,9 +6,9 @@ from ros_bridge import UrRosBridge, UrGripperRosBridge
 from robo_gym_server_modules.robot_server.grpc_msgs.python import robot_server_pb2, robot_server_pb2_grpc
 
 class RobotServerServicer(robot_server_pb2_grpc.RobotServerServicer):
-    def __init__(self, real_robot, ur_model, has_gripper):
+    def __init__(self, real_robot, ur_model, has_gripper, number_of_joint_positions=7, number_of_joint_velocities=7):
         if( has_gripper):
-            self.rosbridge = UrGripperRosBridge(real_robot= real_robot, ur_model= ur_model)
+            self.rosbridge = UrGripperRosBridge(real_robot= real_robot, ur_model= ur_model, number_of_joint_positions=number_of_joint_positions, number_of_joint_velocities=number_of_joint_velocities)
         else:
             self.rosbridge = UrRosBridge(real_robot= real_robot, ur_model= ur_model)
 
