@@ -524,7 +524,12 @@ class UrGripperRosBridge:
         # UR Joints Positions
         reset_steps = int(15.0/self.sleep_time)
         for i in range(reset_steps):
-            self.publish_env_arm_cmd(state[self.target_len:(self.target_len + self.number_of_joint_positions) ]) #6:(6+7) =6:13
+            position_cmd=state[self.target_len:(self.target_len + self.number_of_joint_positions) ]
+            self.publish_env_arm_cmd(position_cmd) #6:(6+7) =6:13
+
+        #updates gripper after arm reaches final position
+        self.send_gripper_cmd(position_cmd)
+        
         if not self.real_robot:
             # Reset collision sensors flags
             self.collision_sensors.update(dict.fromkeys(["shoulder","upper_arm","forearm","wrist_1","wrist_2","wrist_3"], False))
@@ -559,6 +564,7 @@ class UrGripperRosBridge:
             msg.points=[JointTrajectoryPoint()]
 
             #removes finger_joint (index 1)
+            joint_value=position_cmd[1]
             position_cmd= copy.deepcopy(position_cmd)
             del position_cmd[1]
             
@@ -578,6 +584,12 @@ class UrGripperRosBridge:
         else:
             rospy.sleep(self.control_period)
             return [0.0]*6
+
+    def send_gripper_cmd(self, position_cmd):
+        joint_value=position_cmd[1]
+        self.gripper_controller.command_gripper(joint_value)
+
+
 
     def get_model_state(self, model_name, relative_entity_name=''):
         # method used to retrieve model state from gazebo simulation
