@@ -16,7 +16,7 @@
     </physics>
 
     <!-- A cube -->
-    <model name="cube1">
+    <model name="cube">
       <pose>0.81 +0.35 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0.025 0 0 0</pose>
@@ -31,10 +31,11 @@
             <izz>2.3541666666666672e-05</izz>
           </inertia>
         </inertial>
+
         <collision name="collision">
           <geometry>
             <box>
-              <size>0.05 0.05 0.2</size>
+              <size>0.05 0.05 0.1</size>
             </box>
           </geometry>
           <surface>
@@ -57,10 +58,11 @@
             </friction>
           </surface>
         </collision>
+
         <visual name="visual">
           <geometry>
             <box>
-              <size>0.05 0.05 0.2</size>
+              <size>0.05 0.05 0.1</size>
             </box>
           </geometry>
           <material>
@@ -72,5 +74,6 @@
         </visual>
       </link>
     </model>
+
   </world>
 </sdf>
