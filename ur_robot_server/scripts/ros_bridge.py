@@ -5,6 +5,7 @@ import tf
 from geometry_msgs.msg import Twist, Pose, Pose2D
 from gazebo_msgs.msg import ModelState, ContactsState
 from gazebo_msgs.srv import GetModelState, SetModelState, GetLinkState
+from gazebo_msgs.srv import GetWorldProperties
 from gazebo_msgs.srv import SetModelConfiguration, SetModelConfigurationRequest
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
@@ -18,6 +19,7 @@ from threading import Event
 import time
 from robo_gym_server_modules.robot_server.grpc_msgs.python import robot_server_pb2
 from gripper_controller import GripperController
+from cubes_controller import ObjectsController
 
 
 class UrRosBridge:
@@ -414,6 +416,7 @@ class UrGripperRosBridge:
         else:
             raise ValueError('ur_model not recognized')
         self.ur_joint_vel_limits = [self.max_velocity_scale_factor * i for i in self.absolute_ur_joint_vel_limits]
+
         # Minimum Trajectory Point time from start
         self.min_traj_duration = 0.5
 
@@ -439,6 +442,9 @@ class UrGripperRosBridge:
         self.target_mode = rospy.get_param("~target_mode", 'fixed')
         self.target_model_name = rospy.get_param("~target_model_name", 'box100')
 
+        #object(cubes) handler
+        self.cubes_controller=ObjectsController()
+        
         #Instantiates gripper and initializes-> fully open
         self.gripper_controller=GripperController()
 
@@ -454,10 +460,13 @@ class UrGripperRosBridge:
                 target = t_position + [0,0,0]
             else:
                 pose = self.get_model_state_pose(self.target_model_name)
+
                 # Convert orientation target from Quaternion to RPY
                 quaternion = PyKDL.Rotation.Quaternion(pose[3],pose[4],pose[5],pose[6])
                 r,p,y = quaternion.GetRPY()
                 target = pose[0:3] + [r,p,y]
+
+                
         else: 
             raise ValueError
             
@@ -483,6 +492,10 @@ class UrGripperRosBridge:
         msg.state.extend(ur_state)
         msg.state.extend(ee_to_base_transform)
         msg.state.extend([ur_collision])
+
+        #cubes state
+        objs_state=self.cubes_controller.get_objects_state()
+        msg.state.extend(objs_state)
 
         msg.success = 1
         
