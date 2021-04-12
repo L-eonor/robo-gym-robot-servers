@@ -38,6 +38,8 @@ class ObjectsController:
         #requests objects' model names
         self.__get_available_objects()
 
+        #no need to reset on object creation
+        #self.reset_cubes_pos()
 
     def __get_available_objects(self):
         """
@@ -102,3 +104,101 @@ class ObjectsController:
 
         except rospy.ServiceException as e:
             print("Service call failed:" + e)
+
+    def cubes_new_pose(self):
+        
+        """Get pose of a random point in the UR5 workspace.
+
+        Returns:
+            np.array: [x,y,z,alpha,theta,gamma] pose.
+
+        """
+        pose=np.zeros(6)
+
+        singularity_area = True
+
+        # check if generated x,y,z are in singularityarea
+        while singularity_area:
+            # Generate random uniform sample in semisphere taking advantage of the
+            # sampling rule
+
+            # UR5 workspace radius
+            # Max d = 1.892
+            R =  0.900 # reduced slightly
+
+            #phi = np.random.default_rng().uniform(low= 0.0, high= 2*np.pi)
+            phi = np.random.uniform(low= 0.0, high= 2*np.pi)
+            #costheta = np.random.default_rng().uniform(low= 0.0, high= 1.0) # [-1.0,1.0] for a sphere
+            costheta = 0
+            #u = np.random.default_rng().uniform(low= 0.0, high= 1.0)
+            u = np.random.uniform(low= 0.0, high= 1.0)
+
+            theta = np.arccos(costheta)
+            r = R * np.cbrt(u)
+
+            x = r * np.sin(theta) * np.cos(phi)
+            y = r * np.sin(theta) * np.sin(phi)
+            z = r * np.cos(theta)
+
+            if (x**2 + y**2) > 0.085**2:
+                singularity_area = False
+
+        pose[:3]=[x, y, z]
+
+        return pose
+
+    def set_models_state(self):
+
+        state_msg = ModelState()
+
+        for object_name in self.object_names:
+            
+            state_msg.model_name = object_name
+
+            state_msg.pose.position.x =  1
+            state_msg.pose.position.y =  1
+            state_msg.pose.position.z =  0
+            state_msg.pose.orientation.x = 1
+            state_msg.pose.orientation.y = 0
+            state_msg.pose.orientation.z = 0
+            state_msg.pose.orientation.w = 0
+            #print(state_msg)
+
+            rospy.wait_for_service('/gazebo/set_model_state')
+            try:
+                set_model_state_result = self.set_model_state_service(state_msg)
+                #print(set_model_state_result)
+
+            except rospy.ServiceException as e:
+                print("Service call failed:" + e)
+
+    def reset_cubes_pos(self):
+        state_msg = ModelState()
+
+        for object_name in self.object_names:
+            
+            state_msg.model_name = object_name
+
+            pose=self.cubes_new_pose()
+
+            state_msg.pose.position.x =  pose[0]
+            state_msg.pose.position.y =  pose[1]
+            state_msg.pose.position.z =  pose[2]
+            state_msg.pose.orientation.x = 1
+            state_msg.pose.orientation.y = 0
+            state_msg.pose.orientation.z = 0
+            state_msg.pose.orientation.w = 0
+            #print(state_msg)
+
+            rospy.wait_for_service('/gazebo/set_model_state')
+            try:
+                set_model_state_result = self.set_model_state_service(state_msg)
+                #print(set_model_state_result)
+
+            except rospy.ServiceException as e:
+                print("Service call failed:" + e)
+
+
+
+if __name__ == '__main__':
+    objs=ObjectsController()
