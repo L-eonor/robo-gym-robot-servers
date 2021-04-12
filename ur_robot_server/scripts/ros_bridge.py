@@ -444,7 +444,7 @@ class UrGripperRosBridge:
 
         #object(cubes) handler
         self.cubes_controller=ObjectsController()
-        
+         
         #Instantiates gripper and initializes-> fully open
         self.gripper_controller=GripperController()
 
@@ -552,6 +552,12 @@ class UrGripperRosBridge:
             msg.data = True
             self.obstacle_controller_pub.publish(msg)
 
+        #object(cubes) position reset
+        self.cubes_controller.reset_cubes_pos()
+         
+        #initializes gripper-> fully open
+        self.gripper_controller.init_gripper()
+
         self.reset.set()
 
         return 1
@@ -601,8 +607,6 @@ class UrGripperRosBridge:
     def send_gripper_cmd(self, position_cmd):
         joint_value=position_cmd[1]
         self.gripper_controller.command_gripper(joint_value)
-
-
 
     def get_model_state(self, model_name, relative_entity_name=''):
         # method used to retrieve model state from gazebo simulation
