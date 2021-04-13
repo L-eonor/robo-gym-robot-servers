@@ -35,7 +35,7 @@ from std_msgs.msg import Float32
 
 
 class GripperController:
-    def __init__(self, open_pose=0, close_pose=0.8, wait_for_completion=3):
+    def __init__(self, open_pose=0, close_pose=0.8, wait_for_completion=2):
         self.open_pose=open_pose
         self.close_pose=close_pose
         self.wait_for_completion=wait_for_completion
@@ -89,8 +89,8 @@ class GripperController:
     def __percentage_to_gap_size(self, desired_gap_size_percentage):
         '''
         Transforms the gap size percentage into mm
-        Fully open gripper-> 100%=1
-        Fully closed-> 0%=0
+        Fully closed gripper-> 100%=1
+        Fully open-> 0%=0
         '''
 
         #Scales 0%-100% to 0-1
@@ -102,9 +102,9 @@ class GripperController:
 
         #Calculates gap size in mm; adds the lowest value in case of offset
         if self.close_pose > self.open_pose:
-            gap_size=self.close_pose - (self.close_pose-self.open_pose)*relative_gap_size
+            gap_size=self.open_pose + (self.close_pose-self.open_pose)*relative_gap_size
         else:
-            gap_size=self.close_pose + (self.open_pose-self.close_pose)*relative_gap_size
+            gap_size=self.close_pose + (self.open_pose-self.close_pose)*(1-relative_gap_size)
 
         return gap_size
         
@@ -127,15 +127,15 @@ class GripperController:
     def __gap_size_to_state(self, desired_gap_size):
         '''
         Transforms the gap size into 0-1 value to use as gripper state
-        0-> means closed
-        1-> means fully open
+        0-> means open
+        1-> means fully closed 
         '''
 
         if self.close_pose > self.open_pose:
-            gap_size_topic= (self.close_pose - desired_gap_size)/(self.close_pose - self.open_pose)
+            gap_size_topic=(desired_gap_size- self.open_pose  )/(self.close_pose - self.open_pose)
 
         else:
-            gap_size_topic= (desired_gap_size - self.close_pose)/(self.open_pose - self.close_pose)
+            gap_size_topic= (self.open_pose - desired_gap_size)/(self.open_pose  - self.close_pose)
 
         return np.float32(gap_size_topic)
 
