@@ -465,8 +465,7 @@ class UrGripperRosBridge:
                 quaternion = PyKDL.Rotation.Quaternion(pose[3],pose[4],pose[5],pose[6])
                 r,p,y = quaternion.GetRPY()
                 target = pose[0:3] + [r,p,y]
-
-                
+               
         else: 
             raise ValueError
             
@@ -538,10 +537,13 @@ class UrGripperRosBridge:
         reset_steps = int(15.0/self.sleep_time)
         for i in range(reset_steps):
             position_cmd=state[self.target_len:(self.target_len + self.number_of_joint_positions) ]
-            self.publish_env_arm_cmd(position_cmd) #6:(6+7) =6:13
+            self.publish_env_arm_cmd_without_gripper(position_cmd) #6:(6+7) =6:13
 
         #updates gripper after arm reaches final position
-        self.send_gripper_cmd(position_cmd)
+        #self.open_close_gripper(joint_value=joint_value)
+
+        #initializes gripper-> fully open
+        self.gripper_controller.init_gripper()
         
         if not self.real_robot:
             # Reset collision sensors flags
@@ -554,14 +556,56 @@ class UrGripperRosBridge:
 
         #object(cubes) position reset
         self.cubes_controller.reset_cubes_pos()
-         
-        #initializes gripper-> fully open
-        self.gripper_controller.init_gripper()
 
         self.reset.set()
 
         return 1
 
+
+    def publish_env_arm_cmd_without_gripper(self, position_cmd):
+        """Publish environment JointTrajectory msg.
+
+        Publish JointTrajectory message to the env_command topic.
+
+        Args:
+            position_cmd (type): Description of parameter `positions`.
+
+        Returns:
+            type: Description of returned object.
+
+        """
+
+        if self.safe_to_move:
+            msg = JointTrajectory()
+            msg.header = Header()
+            msg.joint_names = ["elbow_joint", "shoulder_lift_joint", "shoulder_pan_joint", \
+                                "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"]
+            msg.points=[JointTrajectoryPoint()]
+
+            #removes finger_joint (index 1)
+            joint_value=position_cmd[1]
+            position_cmd= copy.deepcopy(position_cmd)
+            del position_cmd[1]
+            
+            msg.points[0].positions = position_cmd
+            dur = []
+            for i in range(len(msg.joint_names)):
+                # !!! Be careful here with ur_state index
+                pos = self.ur_state[i]
+                cmd = position_cmd[i]
+                max_vel = self.ur_joint_vel_limits[i]
+                dur.append(max(abs(cmd-pos)/max_vel,self.min_traj_duration))
+
+            msg.points[0].time_from_start = rospy.Duration.from_sec(max(dur))
+            self.arm_cmd_pub.publish(msg)
+            
+            rospy.sleep(self.control_period)
+            return position_cmd
+        else:
+            rospy.sleep(self.control_period)
+            return [0.0]*6
+
+    
     def publish_env_arm_cmd(self, position_cmd):
         """Publish environment JointTrajectory msg.
 
@@ -598,6 +642,10 @@ class UrGripperRosBridge:
 
             msg.points[0].time_from_start = rospy.Duration.from_sec(max(dur))
             self.arm_cmd_pub.publish(msg)
+            
+            #send gripper command
+            self.open_close_gripper(joint_value=joint_value)
+
             rospy.sleep(self.control_period)
             return position_cmd
         else:
@@ -607,6 +655,14 @@ class UrGripperRosBridge:
     def send_gripper_cmd(self, position_cmd):
         joint_value=position_cmd[1]
         self.gripper_controller.command_gripper(joint_value)
+    
+    def open_close_gripper(self, joint_value):
+        if joint_value == 0:
+            self.gripper_controller.open_gripper()
+        elif joint_value ==1:
+            self.gripper_controller.close_gripper()
+        else:
+            self.gripper_controller.command_gripper(joint_value)
 
     def get_model_state(self, model_name, relative_entity_name=''):
         # method used to retrieve model state from gazebo simulation
