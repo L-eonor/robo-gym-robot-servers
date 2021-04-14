@@ -29,9 +29,14 @@ import control_msgs.msg
 import actionlib_tutorials.msg
 
 import time
+import copy
+import PyKDL
 import numpy as np
 from std_msgs.msg import Float32
 
+#get link state
+from gazebo_msgs.msg import LinkState
+from gazebo_msgs.srv import GetLinkState
 
 
 class GripperController:
@@ -43,6 +48,9 @@ class GripperController:
         self.client=None
         self.gripper_state=None
         self.init_gripper()
+
+        #to request gripper position
+        self.gripper_pose_service=rospy.ServiceProxy('/gazebo/get_link_state', GetLinkState)
     
     def __create_goal(self, position, max_effort=-1):
         ''' 
@@ -185,3 +193,33 @@ class GripperController:
         rospy.loginfo("Gripper initialized as fully open")
         return True
 
+    def get_gripper_pose(self):
+        try:
+            #to compute position
+            rospy.wait_for_service('/gazebo/get_link_state')
+            right_finger_pose = self.gripper_pose_service("robot::right_inner_finger", "world").link_state.pose
+
+            #to compute position
+            rospy.wait_for_service('/gazebo/get_link_state')
+            left_finger_pose  = self.gripper_pose_service("robot::left_inner_finger",  "world").link_state.pose
+
+            #gripper position estimation
+            x = (right_finger_pose.position.x + left_finger_pose.position.x)/2
+            y = (right_finger_pose.position.y + left_finger_pose.position.y)/2
+            z = (right_finger_pose.position.z + left_finger_pose.position.z)/2
+
+
+            #to compute orientation
+            rospy.wait_for_service('/gazebo/get_link_state')
+            wrist3_pose       = self.gripper_pose_service("robot::wrist_3_link",       "world").link_state.pose
+            wrist3_orientation= wrist3_pose.orientation
+
+            quaternion = PyKDL.Rotation.Quaternion(wrist3_orientation.x, wrist3_orientation.y, wrist3_orientation.z, wrist3_orientation.w)
+            r,p,y = quaternion.GetRPY()
+
+            gripper_pose = [x, y, z, r, p, y]
+
+            return gripper_pose
+
+        except rospy.ServiceException as e:
+            print("Service call failed:" + e)
