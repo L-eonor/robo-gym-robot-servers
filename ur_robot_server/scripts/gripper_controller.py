@@ -148,6 +148,9 @@ class GripperController:
         return np.float32(gap_size_topic)
 
     def __update_gripper_state(self, gap_size):
+        """
+        Updates internal vars
+        """
 
         gripper_state=self.__gap_size_to_state(gap_size)
         self.gripper_state=gripper_state
@@ -155,6 +158,14 @@ class GripperController:
         return self.gripper_state
 
     def command_gripper(self, desired_gap_size, percentage=False, max_effort=-1):
+        """
+        Commands gripper: sends the desired gap size, either in percentage (0%-100% or 0-1) or absolute distance (meters)
+        Arguments:
+            * desired_gap_size: gap size in one of these 3 forms:
+                - 0%-100% (requires percentage=true). 0 is open, 100% is closed
+                - 0-1 (requires percentage=true). 0 is open, 1 is closed
+                - 0-0.085 m (percentage =false), this is the distance in mm.  0 is open, 0.8 is closed
+        """
         self.__get_action_client()
 
         #gets gap size in mm
@@ -175,18 +186,27 @@ class GripperController:
         return True
 
     def open_gripper(self, max_effort=-1):
+        """
+        Commands gripper: requests to open fingers
+        """
         desired_gap_size=self.open_pose
         self.command_gripper(desired_gap_size, max_effort=max_effort)
 
         return True
 
     def close_gripper(self, max_effort=-1):
+        """
+        Commands gripper: requests to close fingers
+        """
         desired_gap_size=self.close_pose
         self.command_gripper(desired_gap_size, max_effort=max_effort)
 
         return True
 
     def init_gripper(self):
+        """
+        Initialises gripper as fully open
+        """
         
         self.open_gripper()
 
@@ -194,6 +214,10 @@ class GripperController:
         return True
 
     def get_gripper_pose(self):
+        """
+        returns the gripper pose (position + orientation), given by gazebo
+        The return is a list in form: [x, y, z, r, p, y]
+        """
         try:
             #to compute position
             rospy.wait_for_service('/gazebo/get_link_state')
