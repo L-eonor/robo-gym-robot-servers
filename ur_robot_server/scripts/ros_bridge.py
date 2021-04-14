@@ -652,10 +652,6 @@ class UrGripperRosBridge:
             rospy.sleep(self.control_period)
             return [0.0]*6
 
-    def send_gripper_cmd(self, position_cmd):
-        joint_value=position_cmd[1]
-        self.gripper_controller.command_gripper(joint_value)
-    
     def open_close_gripper(self, joint_value):
         if joint_value == 0:
             self.gripper_controller.open_gripper()
