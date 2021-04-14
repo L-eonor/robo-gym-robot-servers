@@ -482,6 +482,11 @@ class UrGripperRosBridge:
 
         #get gripper state
         gripper_state=copy.deepcopy(self.gripper_controller.gripper_state)
+        #gripper pose
+        gripper_pose=self.gripper_controller.get_gripper_pose() 
+        #cubes state
+        objs_state=self.cubes_controller.get_objects_state()
+        
 
         self.get_state_event.set()
 
@@ -491,9 +496,8 @@ class UrGripperRosBridge:
         msg.state.extend(ur_state)
         msg.state.extend(ee_to_base_transform)
         msg.state.extend([ur_collision])
+        msg.state.extend(gripper_pose)
 
-        #cubes state
-        objs_state=self.cubes_controller.get_objects_state()
         msg.state.extend(objs_state)
 
         msg.success = 1
