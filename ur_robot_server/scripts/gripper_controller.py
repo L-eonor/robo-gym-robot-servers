@@ -160,7 +160,7 @@ class GripperController:
         self.__send_command()
         
         #solution: wait x seconds
-        time.sleep(self.wait_for_completion)
+        #time.sleep(self.wait_for_completion)
 
         self.__update_gripper_state(gap_size)
 
