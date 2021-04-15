@@ -232,16 +232,15 @@ class GripperController:
             y = (right_finger_pose.position.y + left_finger_pose.position.y)/2
             z = (right_finger_pose.position.z + left_finger_pose.position.z)/2
 
-
             #to compute orientation
             rospy.wait_for_service('/gazebo/get_link_state')
             wrist3_pose       = self.gripper_pose_service("robot::wrist_3_link",       "world").link_state.pose
             wrist3_orientation= wrist3_pose.orientation
 
             quaternion = PyKDL.Rotation.Quaternion(wrist3_orientation.x, wrist3_orientation.y, wrist3_orientation.z, wrist3_orientation.w)
-            r,p,y = quaternion.GetRPY()
+            roll,pitch,yaw = quaternion.GetRPY()
 
-            gripper_pose = [x, y, z, r, p, y]
+            gripper_pose = [x, y, z, roll, pitch, yaw]
 
             return gripper_pose
 
