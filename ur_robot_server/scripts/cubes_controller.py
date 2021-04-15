@@ -7,7 +7,9 @@ import rospy
 import tf
 from geometry_msgs.msg import Twist, Pose, Pose2D
 from gazebo_msgs.msg import ModelState
+from gazebo_msgs.msg import LinkState
 from gazebo_msgs.srv import GetModelState, SetModelState
+from gazebo_msgs.srv import GetLinkState
 from gazebo_msgs.srv import GetWorldProperties
 import copy
 import numpy as np
@@ -31,6 +33,9 @@ class ObjectsController:
         
         #to set model state
         self.set_model_state_service = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
+
+        #to request cube link position
+        self.get_cube_link_service=rospy.ServiceProxy('/gazebo/get_link_state', GetLinkState)
 
         #array to sabe objects' state
         self.state=[]
@@ -75,9 +80,12 @@ class ObjectsController:
             msg=[]
             for model_id in range(len(self.object_names)):
                 #waits for sevice, requests info and saves i
-                rospy.wait_for_service('/gazebo/get_model_state')
                 model_name=self.object_names[model_id]
-                model_state_result = self.get_model_state_service(model_name, "")
+                #model state gives z top face idk why, trying link pose instead
+                #rospy.wait_for_service('/gazebo/get_model_state')
+                #model_state_result = self.get_model_state_service(model_name, "world")
+                rospy.wait_for_service('/gazebo/get_link_state')
+                model_state_result=self.get_cube_link_service(model_name+"::link", "world").link_state
                         
                 #observation: model name+pose
                 obj_pose=[model_id, model_state_result.pose.position.x, model_state_result.pose.position.y, model_state_result.pose.position.z, \
@@ -180,10 +188,12 @@ class ObjectsController:
             state_msg.model_name = object_name
 
             pose=self.cubes_new_pose()
+            rospy.wait_for_service('/gazebo/get_link_state')
+            model_state_result=self.get_cube_link_service(object_name+"::link", "world").link_state
 
             state_msg.pose.position.x =  pose[0]
             state_msg.pose.position.y =  pose[1]
-            state_msg.pose.position.z =  pose[2]
+            state_msg.pose.position.z =  model_state_result.pose.position.z #do not change z, it has to be the center of mass!
             state_msg.pose.orientation.x = 1
             state_msg.pose.orientation.y = 0
             state_msg.pose.orientation.z = 0
@@ -202,3 +212,4 @@ class ObjectsController:
 
 if __name__ == '__main__':
     objs=ObjectsController()
+    objs.reset_cubes_pos()
