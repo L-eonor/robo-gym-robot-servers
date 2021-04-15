@@ -28,7 +28,7 @@
             <ixz>0</ixz>
             <iyy>2.3541666666666672e-05</iyy>
             <iyz>0</iyz>
-            <izz>2.3541666666666672e-05</izz>
+            <izz>1.17708333333e-05</izz>
           </inertia>
         </inertial>
 
@@ -88,7 +88,7 @@
             <ixz>0</ixz>
             <iyy>2.3541666666666672e-05</iyy>
             <iyz>0</iyz>
-            <izz>2.3541666666666672e-05</izz>
+            <izz>1.17708333333e-05</izz>
           </inertia>
         </inertial>
 
