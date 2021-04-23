@@ -132,7 +132,8 @@ class ObjectsController:
 
             # UR5 workspace radius
             # Max d = 1.892
-            R =  0.900 # reduced slightly
+            #R =  0.900 # reduced slightly
+            R =  0.600
 
             #phi = np.random.default_rng().uniform(low= 0.0, high= 2*np.pi)
             phi = np.random.uniform(low= 0.0, high= 2*np.pi)
