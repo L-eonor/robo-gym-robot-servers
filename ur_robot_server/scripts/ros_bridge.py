@@ -803,3 +803,295 @@ class UrGripperRosBridge:
             pass
         else:
             self.collision_sensors["wrist_3"]=True
+
+class UrReachRosBridge:
+
+    def __init__(self,  real_robot=False, ur_model = 'ur5', number_of_joint_positions=7, number_of_joint_velocities=7):
+        #number of joint positions and velocities-> gripper has no velocity sensor?
+        self.number_of_joint_positions=number_of_joint_positions
+        self.number_of_joint_velocities=number_of_joint_velocities
+
+        # Event is clear while initialization or set_state is going on
+        self.reset = Event()
+        self.reset.clear()
+        self.get_state_event = Event()
+        self.get_state_event.set()
+
+        self.real_robot = real_robot
+
+        # joint_trajectory_command_handler publisher
+        self.arm_cmd_pub = rospy.Publisher('env_arm_command', JointTrajectory, queue_size=1)
+
+        self.ur_state = [0.0] * (self.number_of_joint_positions + self.number_of_joint_velocities) #(7 ur_joint_pos + 6 ur_joint_vel)
+
+        rospy.Subscriber("joint_states", JointState, self.callbackUR)
+
+        # TF Listener
+        self.tf_listener = tf.TransformListener()
+
+        # Robot control rate
+        self.sleep_time = (1.0/rospy.get_param("~action_cycle_rate")) - 0.01
+        self.control_period = rospy.Duration.from_sec(self.sleep_time)
+
+        self.reference_frame = rospy.get_param("~reference_frame", "base")
+
+
+        self.max_velocity_scale_factor = float(rospy.get_param("~max_velocity_scale_factor"))
+        if ur_model == 'ur3'or ur_model == 'ur3e':
+            self.absolute_ur_joint_vel_limits = [3.14, 3.14, 3.14, 6.28, 6.28, 6.28]
+        elif ur_model == 'ur5'or ur_model == 'ur5e':
+            self.absolute_ur_joint_vel_limits = [3.14, 3.14, 3.14, 3.14, 3.14, 3.14]
+        elif ur_model == 'ur10'or ur_model == 'ur10e' or ur_model == 'ur16e':
+            self.absolute_ur_joint_vel_limits = [3.14, 2.09, 2.09, 3.14, 3.14, 3.14]
+        else:
+            raise ValueError('ur_model not recognized')
+        self.ur_joint_vel_limits = [self.max_velocity_scale_factor * i for i in self.absolute_ur_joint_vel_limits]
+
+        # Minimum Trajectory Point time from start
+        self.min_traj_duration = 0.5
+
+        if not self.real_robot:
+            # Subscribers to link collision sensors topics
+
+            rospy.Subscriber("shoulder_collision", ContactsState, self.shoulder_collision_callback)
+            rospy.Subscriber("upper_arm_collision", ContactsState, self.upper_arm_collision_callback)
+            rospy.Subscriber("forearm_collision", ContactsState, self.forearm_collision_callback)
+            rospy.Subscriber("wrist_1_collision", ContactsState, self.wrist_1_collision_callback)
+            rospy.Subscriber("wrist_2_collision", ContactsState, self.wrist_2_collision_callback)
+            rospy.Subscriber("wrist_3_collision", ContactsState, self.wrist_3_collision_callback)
+
+            # Initialization of collision sensor flags
+            self.collision_sensors = dict.fromkeys(["shoulder","upper_arm","forearm","wrist_1","wrist_2","wrist_3"], False)
+
+        #TODO
+        self.safe_to_move = True
+
+        #object(cubes) handler
+        self.cubes_controller=ObjectsController()
+         
+        #Instantiates gripper and initializes-> fully open
+        self.gripper_controller=GripperController()
+
+    def get_state(self):
+        self.get_state_event.clear()
+        # Get environment state
+        state =[]
+                         
+        ur_state = copy.deepcopy(self.ur_state)
+
+        if self.real_robot:
+            ur_collision = False
+        else:
+            ur_collision = any(self.collision_sensors.values())
+
+        #get gripper state
+        gripper_state=copy.deepcopy(self.gripper_controller.gripper_state)
+        #gripper pose
+        gripper_pose=self.gripper_controller.get_gripper_pose() 
+        #cubes state
+        objs_state=self.cubes_controller.get_objects_state()
+        
+
+        self.get_state_event.set()
+
+        # Create and fill State message
+        msg = robot_server_pb2.State()
+        msg.state.extend(ur_state)
+        msg.state.extend([ur_collision])
+        msg.state.extend(gripper_pose)
+
+        msg.state.extend(objs_state)
+
+        msg.success = 1
+        
+        return msg
+
+    def set_state(self, state_msg):
+        # Set environment state
+        state = state_msg.state 
+        # Clear reset Event
+        self.reset.clear()
+        
+        # UR Joints Positions
+        reset_steps = int(15.0/self.sleep_time)
+        for i in range(reset_steps):
+            position_cmd=state[0:self.number_of_joint_positions ]
+            self.publish_env_arm_cmd_without_gripper(position_cmd) #6:(6+7) =6:13
+
+        #initializes gripper-> fully open
+        self.gripper_controller.init_gripper()
+        
+        if not self.real_robot:
+            # Reset collision sensors flags
+            self.collision_sensors.update(dict.fromkeys(["shoulder","upper_arm","forearm","wrist_1","wrist_2","wrist_3"], False))
+        
+        #object(cubes) position reset
+        self.cubes_controller.reset_cubes_pos()
+
+        self.reset.set()
+
+        return 1
+
+    def publish_env_arm_cmd_without_gripper(self, position_cmd):
+        """Publish environment JointTrajectory msg.
+
+        Publish JointTrajectory message to the env_command topic.
+
+        Args:
+            position_cmd (type): Description of parameter `positions`.
+
+        Returns:
+            type: Description of returned object.
+
+        """
+
+
+        msg = JointTrajectory()
+        msg.header = Header()
+        msg.joint_names = ["elbow_joint", "shoulder_lift_joint", "shoulder_pan_joint", \
+                            "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"]
+        msg.points=[JointTrajectoryPoint()]
+
+        #removes finger_joint (index 1)
+        joint_value=position_cmd[1]
+        position_cmd= copy.deepcopy(position_cmd)
+        del position_cmd[1]
+        
+        msg.points[0].positions = position_cmd
+        dur = []
+        for i in range(len(msg.joint_names)):
+            # !!! Be careful here with ur_state index
+            pos = self.ur_state[i]
+            cmd = position_cmd[i]
+            max_vel = self.ur_joint_vel_limits[i]
+            dur.append(max(abs(cmd-pos)/max_vel,self.min_traj_duration))
+
+        msg.points[0].time_from_start = rospy.Duration.from_sec(max(dur))
+        self.arm_cmd_pub.publish(msg)
+        
+        rospy.sleep(self.control_period)
+        return position_cmd
+
+    def publish_env_arm_cmd(self, position_cmd):
+        """Publish environment JointTrajectory msg.
+
+        Publish JointTrajectory message to the env_command topic.
+
+        Args:
+            position_cmd (type): Description of parameter `positions`.
+
+        Returns:
+            type: Description of returned object.
+
+        """
+
+
+        msg = JointTrajectory()
+        msg.header = Header()
+        msg.joint_names = ["elbow_joint", "shoulder_lift_joint", "shoulder_pan_joint", \
+                            "wrist_1_joint", "wrist_2_joint", "wrist_3_joint"]
+        msg.points=[JointTrajectoryPoint()]
+
+        #removes finger_joint (index 1)
+        joint_value=position_cmd[1]
+        position_cmd= copy.deepcopy(position_cmd)
+        del position_cmd[1]
+        
+        msg.points[0].positions = position_cmd
+        dur = []
+        for i in range(len(msg.joint_names)):
+            # !!! Be careful here with ur_state index
+            pos = self.ur_state[i]
+            cmd = position_cmd[i]
+            max_vel = self.ur_joint_vel_limits[i]
+            dur.append(max(abs(cmd-pos)/max_vel,self.min_traj_duration))
+
+        msg.points[0].time_from_start = rospy.Duration.from_sec(max(dur))
+        self.arm_cmd_pub.publish(msg)
+        
+        #send gripper command
+        self.open_close_gripper(joint_value=joint_value)
+
+        rospy.sleep(self.control_period)
+        return position_cmd
+
+    def open_close_gripper(self, joint_value):
+        if joint_value == 0:
+            self.gripper_controller.open_gripper()
+        elif joint_value ==1:
+            self.gripper_controller.close_gripper()
+        else:
+            self.gripper_controller.command_gripper(joint_value)
+
+    def get_link_state(self, link_name, reference_frame=''):
+        # method used to retrieve link state from gazebo simulation
+
+        rospy.wait_for_service('/gazebo/get_link_state')
+        try:
+            link_state_srv = rospy.ServiceProxy('/gazebo/get_link_state', GetLinkState)
+            link_coordinates = link_state_srv(link_name, reference_frame).link_state
+            x = link_coordinates.pose.position.x
+            y = link_coordinates.pose.position.y
+            z = link_coordinates.pose.position.z
+
+            orientation = PyKDL.Rotation.Quaternion(link_coordinates.pose.orientation.x,
+                                                 link_coordinates.pose.orientation.y,
+                                                 link_coordinates.pose.orientation.z,
+                                                 link_coordinates.pose.orientation.w)
+
+            euler_orientation = orientation.GetRPY()
+            roll = euler_orientation[0]
+            pitch = euler_orientation[1]
+            yaw = euler_orientation[2]
+
+            x_vel = link_coordinates.twist.linear.x
+            y_vel = link_coordinates.twist.linear.y
+            z_vel = link_coordinates.twist.linear.z
+            roll_vel = link_coordinates.twist.angular.x
+            pitch_vel = link_coordinates.twist.angular.y
+            yaw_vel = link_coordinates.twist.angular.z
+
+            return x, y, z, roll, pitch, yaw, x_vel, y_vel, z_vel, roll_vel, pitch_vel,  yaw_vel
+        except rospy.ServiceException as e:
+            print("Service call failed:" + e)
+
+    def callbackUR(self,data):
+        if self.get_state_event.is_set():
+            self.ur_state[0:self.number_of_joint_positions]  = data.position[0:self.number_of_joint_positions]
+            self.ur_state[self.number_of_joint_positions:(self.number_of_joint_positions+self.number_of_joint_velocities)] = data.velocity[0:self.number_of_joint_velocities]
+
+    def shoulder_collision_callback(self,data):
+        if data.states == []:
+            pass
+        else:
+            self.collision_sensors["shoulder"]=True
+
+    def upper_arm_collision_callback(self,data):
+        if data.states == []:
+            pass
+        else:
+            self.collision_sensors["upper_arm"]=True
+
+    def forearm_collision_callback(self,data):
+        if data.states == []:
+            pass
+        else:
+            self.collision_sensors["forearm"]=True
+
+    def wrist_1_collision_callback(self,data):
+        if data.states == []:
+            pass
+        else:
+            self.collision_sensors["wrist_1"]=True
+
+    def wrist_2_collision_callback(self,data):
+        if data.states == []:
+            pass
+        else:
+            self.collision_sensors["wrist_2"]=True
+
+    def wrist_3_collision_callback(self,data):
+        if data.states == []:
+            pass
+        else:
+            self.collision_sensors["wrist_3"]=True
