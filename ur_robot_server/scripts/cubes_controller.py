@@ -14,6 +14,7 @@ from gazebo_msgs.srv import GetWorldProperties
 import copy
 import numpy as np
 import PyKDL
+from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 ground_plane_name="ground_plane"
 robot_name="robot"
@@ -60,6 +61,10 @@ class ObjectsController:
             #evaluate whether the objects are different from gound plane and robot, saves names
             self.object_names=[model_name for model_name in world_prop_result.model_names if (model_name!=ground_plane_name and model_name!=robot_name) ]
 
+            self.object_types_str=[model_name[0:-3] for model_name in self.object_names]
+            self.object_types_int=[np.where(object_type==np.unique(self.object_types_str))[0][0] for object_type in self.object_types_str ]
+            self.object_dimensions=np.reshape([list(map(int, (model_type[-8:].split("_", 3)))) for model_type in self.object_types_str], (-1, 3))/100.0
+
         except rospy.ServiceException as e:
             print("Service call failed:" + e)
 
@@ -79,16 +84,18 @@ class ObjectsController:
             self.state=[]
             msg=[]
             for model_id in range(len(self.object_names)):
+                #gets object dimensions, converts from cms to meters, depth, width, height
+                model_dim=self.object_dimensions[model_id]
+
                 #waits for sevice, requests info and saves i
                 model_name=self.object_names[model_id]
                 #model state gives z top face idk why, trying link pose instead
-                #rospy.wait_for_service('/gazebo/get_model_state')
-                #model_state_result = self.get_model_state_service(model_name, "world")
                 rospy.wait_for_service('/gazebo/get_link_state')
                 model_state_result=self.get_cube_link_service(model_name+"::link", "world").link_state
                         
                 #observation: model name+pose
-                obj_pose=[model_id, model_state_result.pose.position.x, model_state_result.pose.position.y, model_state_result.pose.position.z, \
+                obj_pose=[model_id, model_dim[0], model_dim[1], model_dim[2], \
+                          model_state_result.pose.position.x, model_state_result.pose.position.y, model_state_result.pose.position.z, \
                           model_state_result.pose.orientation.x, model_state_result.pose.orientation.y, model_state_result.pose.orientation.z, model_state_result.pose.orientation.w]     
                 
                 #updates state array
@@ -100,14 +107,16 @@ class ObjectsController:
 
 
                 #quaternion to rpy
-                quaternion = PyKDL.Rotation.Quaternion(obj_pose[4],obj_pose[5],obj_pose[6], obj_pose[7])
+                quaternion = PyKDL.Rotation.Quaternion(model_state_result.pose.orientation.x, model_state_result.pose.orientation.y, model_state_result.pose.orientation.z, model_state_result.pose.orientation.w)
                 r,p,y = quaternion.GetRPY()
-                target = obj_pose[0:4] + [r,p,y] #0->id, 1, 2, 3-> x, y, z
-
-                msg.extend(target)
+                target = obj_pose[0:7] + [r,p,y] #0->id, 1, 2, 3-> size, 4, 5, 6-> x, y, z
+                print(target)
+                #print([model_state_result.pose.orientation.x, model_state_result.pose.orientation.y, model_state_result.pose.orientation.z, model_state_result.pose.orientation.w])
+                #print([r, p, y])
+                #print(quaternion.GetEulerZYX())
+                #print(euler_from_quaternion([model_state_result.pose.orientation.x, model_state_result.pose.orientation.y, model_state_result.pose.orientation.z, model_state_result.pose.orientation.w], axes='sxyz'))
+                msg.extend(target)        
             
-
-            #return self.state
             return msg
 
         except rospy.ServiceException as e:
@@ -151,10 +160,15 @@ class ObjectsController:
 
             if (x**2 + y**2) > 0.085**2:
                 singularity_area = False
-
+        #random position
         pose[:3]=[x, y, z]
 
-        return pose
+
+        #random roll-> quaternion-> set object
+        random_roll=np.random.random()*np.pi
+        quaternion=quaternion_from_euler(0, 0, random_roll)
+        
+        return pose, quaternion
 
     def set_models_state(self):
 
@@ -188,18 +202,22 @@ class ObjectsController:
             
             state_msg.model_name = object_name
 
-            pose=self.cubes_new_pose()
+            pose, quaternion=self.cubes_new_pose()
             rospy.wait_for_service('/gazebo/get_link_state')
             model_state_result=self.get_cube_link_service(object_name+"::link", "world").link_state
 
+            #random posixion [x, y, z]
             state_msg.pose.position.x =  pose[0]
             state_msg.pose.position.y =  pose[1]
             state_msg.pose.position.z =  model_state_result.pose.position.z #do not change z, it has to be the center of mass!
-            state_msg.pose.orientation.x = 1
-            state_msg.pose.orientation.y = 0
-            state_msg.pose.orientation.z = 0
-            state_msg.pose.orientation.w = 0
-            #print(state_msg)
+
+            #print(random_roll)
+            
+            state_msg.pose.orientation.x = quaternion[0]
+            state_msg.pose.orientation.y = quaternion[1]
+            state_msg.pose.orientation.z = quaternion[2]
+            state_msg.pose.orientation.w = quaternion[3]
+            #print([state_msg.pose.orientation.x, state_msg.pose.orientation.y, state_msg.pose.orientation.z, state_msg.pose.orientation.w])
 
             rospy.wait_for_service('/gazebo/set_model_state')
             try:
