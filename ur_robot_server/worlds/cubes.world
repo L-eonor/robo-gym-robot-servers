@@ -16,7 +16,7 @@
     </physics>
 
     <!-- A parallelepiped -->
-    <model name="cube01">
+    <model name="cube_05_15_30_01">
       <pose>0.81 +0.35 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -76,7 +76,7 @@
     </model>
 
     <!-- A base parallelepiped -->
-    <model name="cube02">
+    <model name="cube_05_15_30_02">
       <pose>0.81 +0.50 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -136,7 +136,7 @@
     </model>
 
     <!-- A parallelepiped -->
-    <model name="cube03">
+    <model name="cube_05_15_30_03">
       <pose>0.41 +0.35 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -196,7 +196,7 @@
     </model>
 
     <!-- A base parallelepiped -->
-    <model name="cube04">
+    <model name="cube_05_15_30_04">
       <pose>0.41 +0.50 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -256,7 +256,7 @@
     </model>
 
     <!-- A base cube -->
-    <model name="cube11">
+    <model name="cube_05_05_05_11">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -316,7 +316,7 @@
     </model>
 
     <!-- A base cube -->
-    <model name="cube12">
+    <model name="cube_05_05_05_12">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -376,7 +376,7 @@
     </model>
     
     <!-- A base cube -->
-    <model name="cube13">
+    <model name="cube_05_05_05_13">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -436,7 +436,7 @@
     </model>
         
     <!-- A base cube -->
-    <model name="cube14">
+    <model name="cube_05_05_05_14">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -496,7 +496,7 @@
     </model>
       
     <!-- A base cube -->
-    <model name="cube15">
+    <model name="cube_05_05_05_15">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -556,7 +556,7 @@
     </model>
     
     <!-- A base cube -->
-    <model name="cube16">
+    <model name="cube_05_05_05_16">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -615,7 +615,7 @@
       </link>
     </model>
         <!-- A base cube -->
-    <model name="cube17">
+    <model name="cube_05_05_05_17">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -675,7 +675,7 @@
     </model>
     
     <!-- A base cube -->
-    <model name="cube18">
+    <model name="cube_05_05_05_18">
       <pose>0.81 +0.65 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
