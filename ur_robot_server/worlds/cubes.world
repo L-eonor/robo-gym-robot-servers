@@ -16,7 +16,7 @@
     </physics>
 
     <!-- A parallelepiped -->
-    <model name="cube_05_15_30_01">
+    <model name="cube_05_15_05_01">
       <pose>0.81 +0.35 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -76,7 +76,7 @@
     </model>
 
     <!-- A base parallelepiped -->
-    <model name="cube_05_15_30_02">
+    <model name="cube_05_15_05_02">
       <pose>0.81 +0.50 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -136,7 +136,7 @@
     </model>
 
     <!-- A parallelepiped -->
-    <model name="cube_05_15_30_03">
+    <model name="cube_05_15_05_03">
       <pose>0.41 +0.35 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
@@ -196,7 +196,7 @@
     </model>
 
     <!-- A base parallelepiped -->
-    <model name="cube_05_15_30_04">
+    <model name="cube_05_15_05_04">
       <pose>0.41 +0.50 0.0 0 0 0</pose>
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
