@@ -21,15 +21,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -81,15 +82,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -141,15 +143,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -201,15 +204,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -261,15 +265,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -321,15 +326,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -381,15 +387,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -441,15 +448,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -501,15 +509,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -561,15 +570,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -620,15 +630,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
@@ -680,15 +691,16 @@
       <link name="link">
         <pose>0 0 0 0 0 0</pose>
         <inertial>
-          <mass>0.0565</mass>
-          <inertia>
-            <ixx>2.3541666666666672e-05</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>2.3541666666666672e-05</iyy>
-            <iyz>0</iyz>
-            <izz>1.17708333333e-05</izz>
-          </inertia>
+          <mass>0.1</mass>
+            <inertia> <!-- inertias are tricky to compute -->
+              <!-- http://gazebosim.org/tutorials?tut=inertia&cat=build_robot -->
+              <ixx>0.0002075</ixx>   <!-- for a box: ixx = 0.083 * mass * (y*y + z*z) -->
+              <ixy>0.0</ixy>         <!-- for a box: ixy = 0 -->
+              <ixz>0.0</ixz>         <!-- for a box: ixz = 0 -->
+              <iyy>4.15e-5</iyy>       <!-- for a box: iyy = 0.083 * mass * (x*x + z*z) -->
+              <iyz>0.0</iyz>         <!-- for a box: iyz = 0 -->
+              <izz>0.0002075</izz>   <!-- for a box: izz = 0.083 * mass * (x*x + y*y) -->
+            </inertia>
         </inertial>
 
         <collision name="collision">
