@@ -110,7 +110,7 @@ class ObjectsController:
                 quaternion = PyKDL.Rotation.Quaternion(model_state_result.pose.orientation.x, model_state_result.pose.orientation.y, model_state_result.pose.orientation.z, model_state_result.pose.orientation.w)
                 r,p,y = quaternion.GetRPY()
                 target = obj_pose[0:7] + [r,p,y] #0->id, 1, 2, 3-> size, 4, 5, 6-> x, y, z
-                print(target)
+                #print(target)
                 #print([model_state_result.pose.orientation.x, model_state_result.pose.orientation.y, model_state_result.pose.orientation.z, model_state_result.pose.orientation.w])
                 #print([r, p, y])
                 #print(quaternion.GetEulerZYX())
@@ -122,7 +122,7 @@ class ObjectsController:
         except rospy.ServiceException as e:
             print("Service call failed:" + e)
 
-    def cubes_new_pose(self):
+    def cubes_new_pose(self, cube_order):
         
         """Get pose of a random point in the UR5 workspace.
 
@@ -142,21 +142,20 @@ class ObjectsController:
             # UR5 workspace radius
             # Max d = 1.892
             #R =  0.900 # reduced slightly
-            R =  0.600
+            R =  0.800
 
             #phi = np.random.default_rng().uniform(low= 0.0, high= 2*np.pi)
-            phi = np.random.uniform(low= 0.0, high= 2*np.pi)
-            #costheta = np.random.default_rng().uniform(low= 0.0, high= 1.0) # [-1.0,1.0] for a sphere
-            costheta = 0
+            #phi = np.random.uniform(low= 0.0, high= 2*np.pi)
+            phi = np.random.uniform(low= (3*np.pi/2), high= 2*np.pi)
+            #phi = np.pi/self.number_of_objs * cube_order
             #u = np.random.default_rng().uniform(low= 0.0, high= 1.0)
             u = np.random.uniform(low= 0.0, high= 1.0)
 
-            theta = np.arccos(costheta)
             r = R * np.cbrt(u)
 
-            x = r * np.sin(theta) * np.cos(phi)
-            y = r * np.sin(theta) * np.sin(phi)
-            z = r * np.cos(theta)
+            x = r * np.cos(phi)
+            y = r * np.sin(phi)
+            z = 0
 
             if (x**2 + y**2) > 0.085**2:
                 singularity_area = False
@@ -170,46 +169,24 @@ class ObjectsController:
         
         return pose, quaternion
 
-    def set_models_state(self):
-
-        state_msg = ModelState()
-
-        for object_name in self.object_names:
-            
-            state_msg.model_name = object_name
-
-            state_msg.pose.position.x =  1
-            state_msg.pose.position.y =  1
-            state_msg.pose.position.z =  0
-            state_msg.pose.orientation.x = 1
-            state_msg.pose.orientation.y = 0
-            state_msg.pose.orientation.z = 0
-            state_msg.pose.orientation.w = 0
-            #print(state_msg)
-
-            rospy.wait_for_service('/gazebo/set_model_state')
-            try:
-                set_model_state_result = self.set_model_state_service(state_msg)
-                #print(set_model_state_result)
-
-            except rospy.ServiceException as e:
-                print("Service call failed:" + e)
-
     def reset_cubes_pos(self):
         state_msg = ModelState()
 
+        self.number_of_objs=len(self.object_names)
+        i=-1
         for object_name in self.object_names:
-            
+            i+=1
+
             state_msg.model_name = object_name
 
-            pose, quaternion=self.cubes_new_pose()
+            pose, quaternion=self.cubes_new_pose(i)
             rospy.wait_for_service('/gazebo/get_link_state')
             model_state_result=self.get_cube_link_service(object_name+"::link", "world").link_state
 
             #random posixion [x, y, z]
             state_msg.pose.position.x =  pose[0]
             state_msg.pose.position.y =  pose[1]
-            state_msg.pose.position.z =  model_state_result.pose.position.z #do not change z, it has to be the center of mass!
+            state_msg.pose.position.z =  self.object_dimensions[i][-1]/2 #model_state_result.pose.position.z #do not change z, it has to be the center of mass!
 
             #print(random_roll)
             
