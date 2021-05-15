@@ -471,14 +471,14 @@ class UrGripperRosBridge:
         # Clear reset Event
         self.reset.clear()
         
+        #initializes gripper-> fully open
+        self.gripper_controller.init_gripper()
+
         # UR Joints Positions
         reset_steps = int(15.0/self.sleep_time)
         for i in range(reset_steps):
             position_cmd=state[0:self.number_of_joint_positions ]
-            self.publish_env_arm_cmd_without_gripper(position_cmd) #6:(6+7) =6:13
-
-        #initializes gripper-> fully open
-        self.gripper_controller.init_gripper()
+            self.publish_env_arm_cmd_without_gripper(position_cmd) 
         
         if not self.real_robot:
             # Reset collision sensors flags
