@@ -133,7 +133,7 @@ class ObjectsController:
         pose=np.zeros(6)
 
         singularity_area = True
-
+        '''
         # check if generated x,y,z are in singularityarea
         while singularity_area:
             # Generate random uniform sample in semisphere taking advantage of the
@@ -149,7 +149,7 @@ class ObjectsController:
             phi = np.random.uniform(low= (3*np.pi/2), high= 2*np.pi)
             #phi = np.pi/self.number_of_objs * cube_order
             #u = np.random.default_rng().uniform(low= 0.0, high= 1.0)
-            u = np.random.uniform(low= 0.0, high= 1.0)
+            u = np.random.uniform(low= 0.1, high= 1.0)
 
             r = R * np.cbrt(u)
 
@@ -159,6 +159,11 @@ class ObjectsController:
 
             if (x**2 + y**2) > 0.085**2:
                 singularity_area = False
+        '''
+        x = np.random.uniform(low= 0.20, high= 0.6)
+        y = np.random.uniform(low=-0.55, high= 0)
+        z = 0
+
         #random position
         pose[:3]=[x, y, z]
 
