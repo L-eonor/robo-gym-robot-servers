@@ -160,8 +160,10 @@ class ObjectsController:
             if (x**2 + y**2) > 0.085**2:
                 singularity_area = False
         '''
-        x = np.random.uniform(low= 0.20, high= 0.6)
-        y = np.random.uniform(low=-0.55, high= 0)
+        #x = np.random.uniform(low= 0.20, high= 0.6)
+        #y = np.random.uniform(low=-0.55, high= 0)
+        x = np.random.uniform(low= 0.30, high= 0.6)
+        y = np.random.uniform(low=-0.2, high= 0.2)
         z = 0
 
         #random position
