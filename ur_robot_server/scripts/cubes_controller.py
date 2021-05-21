@@ -15,6 +15,7 @@ import copy
 import numpy as np
 import PyKDL
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
+import random
 
 ground_plane_name="ground_plane"
 robot_name="robot"
@@ -164,6 +165,13 @@ class ObjectsController:
         #y = np.random.uniform(low=-0.55, high= 0)
         x = np.random.uniform(low= 0.30, high= 0.6)
         y = np.random.uniform(low=-0.2, high= 0.2)
+        possible_cubes_pos=[(0.4, 0.1), (0.4, 0.1)]
+        chosen_pose=random.choice(possible_cubes_pos)
+        x=chosen_pose[0]
+        y=chosen_pose[1]
+        print("x="+str(x))
+        print("y="+str(y))
+
         z = 0
 
         #random position
