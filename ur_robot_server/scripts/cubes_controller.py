@@ -180,7 +180,8 @@ class ObjectsController:
 
         #random roll-> quaternion-> set object
         random_roll=np.random.random()*np.pi
-        quaternion=quaternion_from_euler(0, 0, random_roll)
+        #quaternion=quaternion_from_euler(0, 0, random_roll)
+        quaternion=quaternion_from_euler(0, 0, np.pi/2)
         
         return pose, quaternion
 
