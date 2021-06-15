@@ -127,6 +127,7 @@
     -->
     <!-- Gazebo grasping plugin - arraches object to palm link -->
     <!-- Wiki: https://github.com/JenniferBuehler/gazebo-pkgs/wiki/The-Gazebo-grasp-fix-plugin -->
+    
     <gazebo>
       <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
         <arm>
@@ -139,11 +140,12 @@
         <update_rate>4</update_rate>
         <grip_count_threshold>4</grip_count_threshold>
         <max_grip_count>8</max_grip_count>
-        <release_tolerance>0.0003</release_tolerance>
+        <release_tolerance>0.00005</release_tolerance>
         <disable_collisions_on_attach>false</disable_collisions_on_attach>
         <contact_topic>__default_topic__</contact_topic>
       </plugin>
     </gazebo>
+
 
     <!-- Better graspping properties-->
     
@@ -155,15 +157,18 @@
             <kp>10000.0</kp>
             <kd>0.01</kd>
             <max_vel>0.0</max_vel>
-            <min_depth>0.001</min_depth>
             </ode>
           </contact>
           <friction>
             <ode>
-            <mu>0.9</mu> 
-            <mu2>0.9</mu2>
+            <mu>100.0</mu> 
+            <mu2>100.0</mu2>
             </ode>
           </friction>
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+            <threshold>1e+06</threshold>
+          </bounce>
         </surface>
       </collision>
     </gazebo>
@@ -176,15 +181,19 @@
             <kp>10000.0</kp>
             <kd>0.01</kd>
             <max_vel>0.0</max_vel>
-            <min_depth>0.001</min_depth>
             </ode>
           </contact>
           <friction>
             <ode>
-            <mu>0.9</mu> 
-            <mu2>0.9</mu2>
+            <mu>100.0</mu> 
+            <mu2>100.0</mu2>
             </ode>
           </friction>
+
+          <bounce>
+            <restitution_coefficient>0</restitution_coefficient>
+            <threshold>1e+06</threshold>
+          </bounce>
         </surface>
       </collision>
     </gazebo>
